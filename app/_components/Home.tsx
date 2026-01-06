@@ -11,7 +11,7 @@ export default function HomePage(){
       {/* Navbar */}
       <nav className="relative z-10 flex items-center justify-between px-8 py-6">
         <h1 className="text-2xl font-bold tracking-wide">
-          Ink<span className="text-purple-300">AI</span>
+          Tattoo<span className="text-purple-300">Generator</span>
         </h1>
       </nav>
 
@@ -66,7 +66,7 @@ export default function HomePage(){
 
       {/* Footer */}
       <footer className="relative z-10 mt-32 pb-8 text-center text-purple-200">
-        <p>© 2026 InkAI — Tattoos with Meaning</p>
+        <p>© 2026 TattooGenerator — Tattoos with Meaning</p>
       </footer>
     </div>
   );
