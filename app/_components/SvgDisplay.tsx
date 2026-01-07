@@ -113,18 +113,7 @@ export default function SvgDisplay({ svg }: Props) {
           </button>
 
           {/* Download PNG Button */}
-          <button
-            onClick={downloadPNG}
-            className={`px-3 py-2 rounded-lg transition-all duration-300 flex items-center gap-2
-              "bg-gray-600 hover:bg-gray-500 text-gray-100" 
-                
-              }
-            `}
-            title="Download PNG image"
-          >
-            <ImageIcon size={16} /> {/* ✅ Use renamed import */}
-            <span className="text-sm hidden sm:inline">PNG</span>
-          </button>
+          
         </div>
       </div>
       

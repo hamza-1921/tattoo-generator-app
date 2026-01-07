@@ -38,12 +38,12 @@ export default function TattooSymbolForm() {
     setLoading(true);
 
     try {
+     
       const res = await fetch("/api/ultrachaos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text}),
+        body: JSON.stringify({ text,style}),
       });
-
       const data = await res.json();
       setSvg(data.svg);
     } catch (err) {

@@ -76,7 +76,7 @@ export default function TattooToTextPage() {
             <label className="block p-6 border-2 border-dashed border-purple-400/40 rounded-lg text-center cursor-pointer hover:border-purple-300 transition">
               <Upload className="mx-auto mb-2 w-6 h-6 text-purple-300" />
               <p className="text-purple-100">Click to upload tattoo</p>
-              <p className="text-sm text-purple-300">SVG, PNG, JPG</p>
+              <p className="text-sm text-purple-300">SVG</p>
               <input
                 ref={fileInputRef}
                 type="file"

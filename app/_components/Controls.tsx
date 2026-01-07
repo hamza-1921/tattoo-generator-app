@@ -61,7 +61,7 @@ export default function Controls({
       <select
         value={style}
         onChange={(e) => setStyle(e.target.value)}
-        className={`w-full px-4 py-3 mb-4 rounded-lg border focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-300
+        className={`w-full  px-4 py-3 mb-4 rounded-lg border focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-300
          }
         `}
       >
@@ -70,7 +70,7 @@ export default function Controls({
           "japanese","blackwork","dotwork","mandala","script","biomech",
           "chaos","ultrachaos"
         ].map((s) => (
-          <option key={s} value={s}>
+          <option key={s} value={s} className="bg-black color-white">
             {s.charAt(0).toUpperCase() + s.slice(1)}
           </option>
         ))}
