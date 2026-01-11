@@ -1,9 +1,12 @@
 "use client";
 
+
+import { useState } from "react";
+
+
 interface ControlsProps {
   text: string;
   style: string;
-
   loading: boolean;
   isRecording: boolean;
   setText: (v: string) => void;
@@ -11,13 +14,11 @@ interface ControlsProps {
   generate: () => void;
   startRecording: () => void;
   stopRecording: () => void;
-  onAudioFile: (file: File) => void;
 }
 
 export default function Controls({
   text,
   style,
-
   loading,
   isRecording,
   setText,
@@ -25,21 +26,55 @@ export default function Controls({
   generate,
   startRecording,
   stopRecording,
-  onAudioFile,
 }: ControlsProps) {
+
+
+
+  const [uploading, setUploading] = useState(false);
+
+  const busy = loading || uploading;
+
+  /* ---------------- FILE UPLOAD ---------------- */
+  const handleFileUpload = async (file: File) => {
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("audio", file, "recording.webm");
+
+      const response = await fetch("/api/audio-to-text", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) throw new Error(data.error || "Failed to transcribe");
+
+      setText(data.text);
+
+      const audio = new Audio(URL.createObjectURL(file));
+      audio.play();
+    } catch (err: unknown) {
+      if (err instanceof Error) alert(`Error: ${err.message}`);
+      else alert("An unexpected error occurred");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      handleFileUpload(e.target.files[0]);
+    }
+  };
+
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") generate();
   };
 
-  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.[0]) {
-      onAudioFile(e.target.files[0]);
-    }
-  };
-
   return (
     <>
-      <p className="mb-4 text-gray-600 dark:text-gray-300">
+      <p className="mb-4 text-gray-300 text-sm">
         Enter text, speak, or upload an audio file.
       </p>
 
@@ -49,60 +84,57 @@ export default function Controls({
         value={text}
         onChange={(e) => setText(e.target.value)}
         onKeyDown={handleKeyPress}
-        disabled={loading}
+        disabled={busy}
         placeholder="Enter text..."
-        className={`w-full px-4 py-3 mb-4 rounded-lg border focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-300
-          ""border-gray-700 bg-gray-700 text-gray-100" "}
-         
-        `}
+        className="w-full px-3 py-2 mb-3 rounded-lg border border-gray-600 bg-gray-700 text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-300"
       />
 
       {/* STYLE SELECT */}
       <select
         value={style}
         onChange={(e) => setStyle(e.target.value)}
-        className={`w-full  px-4 py-3 mb-4 rounded-lg border focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-300
-         }
-        `}
+        className="w-full px-3 py-2 mb-3 rounded-lg border border-gray-600 bg-gray-700 text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-300"
       >
         {[
           "tribal","geometric","minimalist","traditional","neotraditional",
           "japanese","blackwork","dotwork","mandala","script","biomech",
           "chaos","ultrachaos"
         ].map((s) => (
-          <option key={s} value={s} className="bg-black color-white">
+          <option key={s} value={s}>
             {s.charAt(0).toUpperCase() + s.slice(1)}
           </option>
         ))}
       </select>
 
       {/* AUDIO CONTROLS */}
-      <div className="flex gap-2 mb-4">
+      <div className="flex gap-2 mb-3">
+        {/* Voice Recording */}
         {!isRecording ? (
           <button
             onClick={startRecording}
-            disabled={loading}
-            className="flex-1 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg"
+            disabled={busy}
+            className="flex-1 py-1 text-sm bg-green-600 hover:bg-green-500 text-white rounded-lg"
           >
-            🎤 Start Recording
+            🎤 Start
           </button>
         ) : (
           <button
             onClick={stopRecording}
-            className="flex-1 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg"
+            className="flex-1 py-1 text-sm bg-red-600 hover:bg-red-500 text-white rounded-lg"
           >
-            ⏹ Stop Recording
+            ⏹ Stop
           </button>
         )}
 
-        <label className="flex-1 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg flex items-center justify-center cursor-pointer">
-          📁 Upload Audio
+        {/* Upload Audio File */}
+        <label className="flex-1 py-1 text-sm bg-blue-600 hover:bg-blue-500 text-white rounded-lg flex items-center justify-center cursor-pointer">
+          📁 Upload
           <input
             type="file"
             accept="audio/*"
             onChange={handleFileInput}
             className="hidden"
-          disabled={loading}
+            disabled={busy}
           />
         </label>
       </div>
@@ -110,14 +142,14 @@ export default function Controls({
       {/* GENERATE BUTTON */}
       <button
         onClick={generate}
-        disabled={loading}
-        className={`w-full py-3 font-bold rounded-lg mb-4 transition-colors duration-300
-          
-          ${loading ? "opacity-50 cursor-not-allowed" : ""}
-        `}
+        disabled={busy}
+        className={`w-full py-2 text-sm font-bold rounded-lg mb-3 transition-colors duration-300 ${
+          busy ? "opacity-50 cursor-not-allowed" : ""
+        }`}
       >
-        {loading ? "Processing..." : "Generate Tattoo"}
+        {busy ? "Processing..." : "Generate Tattoo"}
       </button>
     </>
   );
 }
+
