@@ -52,8 +52,8 @@ export default function Controls({
 
       setText(data.text);
 
-      const audio = new Audio(URL.createObjectURL(file));
-      audio.play();
+;
+
     } catch (err: unknown) {
       if (err instanceof Error) alert(`Error: ${err.message}`);
       else alert("An unexpected error occurred");
